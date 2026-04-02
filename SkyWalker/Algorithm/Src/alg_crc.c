@@ -1,6 +1,6 @@
 #include "alg_crc.h"
-#include <stdbool.h>
-#include <stdint.h>
+#include "stdbool.h"
+#include "stdint.h"
 // CRC8校验表
 uint8_t crc8_init = 0xFF;
 uint8_t crc8_table[256] = {

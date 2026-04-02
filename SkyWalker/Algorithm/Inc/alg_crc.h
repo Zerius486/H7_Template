@@ -1,7 +1,7 @@
 #ifndef ALG_CRC_H
 #define ALG_CRC_H
-#include <stdbool.h>
-#include <stdint.h>
+#include "stdbool.h"
+#include "stdint.h"
 // CRC8校验表
 extern uint8_t crc8_init;
 extern uint8_t crc8_table[256];

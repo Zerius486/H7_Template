@@ -1,6 +1,6 @@
 #include "alg_pid.h"
-#include <math.h>
-#include <stdbool.h>
+#include "math.h"
+#include "stdbool.h"
 /**
  * @brief 重置PID控制器状态
  * @param pid_object PID控制器结构体指针

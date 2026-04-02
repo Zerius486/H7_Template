@@ -1,6 +1,6 @@
 #ifndef ALG_PID_H
 #define ALG_PID_H
-#include <stdbool.h>
+#include "stdbool.h"
 // PID控制器结构体
 typedef struct {
     bool is_enabled;             // PID使能标志

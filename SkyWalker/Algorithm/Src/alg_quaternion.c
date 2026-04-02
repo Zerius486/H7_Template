@@ -1,5 +1,5 @@
 #include "alg_quaternion.h"
-#include <math.h>
+#include "math.h"
 /**
  * @brief 四元数乘法
  * @param q1 四元数1

@@ -1,6 +1,6 @@
 #include "alg_conversion.h"
-#include <stdint.h>
-#include <math.h>
+#include "stdint.h"
+#include "math.h"
 /**
  * @brief 将转每分钟转换为弧度每秒
  * @param rpm 转每分钟

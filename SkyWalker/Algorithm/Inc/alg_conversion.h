@@ -1,6 +1,6 @@
 #ifndef ALG_CONVERSION_H
 #define ALG_CONVERSION_H
-#include <stdint.h>
+#include "stdint.h"
 float rpm_to_rad_s(float rpm);
 float rad_s_to_rpm(float rad_s);
 float encoder_to_radian(uint16_t encoder_value);

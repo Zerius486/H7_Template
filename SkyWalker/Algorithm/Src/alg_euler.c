@@ -1,5 +1,10 @@
-#include <math.h>
 #include "alg_euler.h"
+#include "math.h"
+/**
+ * @brief 四元数转换为欧拉角
+ * @param q 四元数
+ * @return 欧拉角
+ */
 euler_t quaternion_to_euler(quaternion_t q) {
     euler_t euler;
     // 计算roll
