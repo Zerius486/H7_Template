@@ -51,39 +51,39 @@ static void ekf_predict_model_and_jacobian(imu_ekf_object_t *ekf, const float gy
 	float *x_minus = ekf->x_minus_data;
 	float *f = ekf->f_data;
 	const float dt = ekf->dt;
-	const float phi = x[EKF_IDX_ROLL];
-	const float theta = x[EKF_IDX_PITCH];
+	const float phi = x[0];
+	const float theta = x[1];
 	const float sin_phi = sinf(phi);
 	const float cos_phi = cosf(phi);
 	const float cos_theta = ekf_safe_cos(theta);
 	const float tan_theta = tanf(theta);
 	const float sec_theta = 1.0f / cos_theta;
 	const float sec_theta2 = sec_theta * sec_theta;
-	const float p = gyro[0] - x[EKF_IDX_BGX];
-	const float q = gyro[1] - x[EKF_IDX_BGY];
-	const float r = gyro[2] - x[EKF_IDX_BGZ];
+	const float p = gyro[0] - x[3];
+	const float q = gyro[1] - x[4];
+	const float r = gyro[2] - x[5];
 	const float phi_dot = p + q * sin_phi * tan_theta + r * cos_phi * tan_theta;
 	const float theta_dot = q * cos_phi - r * sin_phi;
 	const float psi_dot = q * sin_phi * sec_theta + r * cos_phi * sec_theta;
-	x_minus[EKF_IDX_ROLL] = ekf_wrap_pi(phi + dt * phi_dot);
-	x_minus[EKF_IDX_PITCH] = ekf_wrap_pi(theta + dt * theta_dot);
-	x_minus[EKF_IDX_YAW] = ekf_wrap_pi(x[EKF_IDX_YAW] + dt * psi_dot);
-	x_minus[EKF_IDX_BGX] = x[EKF_IDX_BGX];
-	x_minus[EKF_IDX_BGY] = x[EKF_IDX_BGY];
-	x_minus[EKF_IDX_BGZ] = x[EKF_IDX_BGZ];
+	x_minus[0] = ekf_wrap_pi(phi + dt * phi_dot);
+	x_minus[1] = ekf_wrap_pi(theta + dt * theta_dot);
+	x_minus[2] = ekf_wrap_pi(x[2] + dt * psi_dot);
+	x_minus[3] = x[3];
+	x_minus[4] = x[4];
+	x_minus[5] = x[5];
 	ekf_set_identity(f, EKF_IMU_STATE_SIZE);
-	f[EKF_IDX_ROLL * EKF_IMU_STATE_SIZE + EKF_IDX_ROLL] = 1.0f + dt * (q * cos_phi * tan_theta - r * sin_phi * tan_theta);
-	f[EKF_IDX_ROLL * EKF_IMU_STATE_SIZE + EKF_IDX_PITCH] = dt * (q * sin_phi + r * cos_phi) * sec_theta2;
-	f[EKF_IDX_ROLL * EKF_IMU_STATE_SIZE + EKF_IDX_BGX] = -dt;
-	f[EKF_IDX_ROLL * EKF_IMU_STATE_SIZE + EKF_IDX_BGY] = -dt * sin_phi * tan_theta;
-	f[EKF_IDX_ROLL * EKF_IMU_STATE_SIZE + EKF_IDX_BGZ] = -dt * cos_phi * tan_theta;
-	f[EKF_IDX_PITCH * EKF_IMU_STATE_SIZE + EKF_IDX_ROLL] = dt * (-q * sin_phi - r * cos_phi);
-	f[EKF_IDX_PITCH * EKF_IMU_STATE_SIZE + EKF_IDX_BGY] = -dt * cos_phi;
-	f[EKF_IDX_PITCH * EKF_IMU_STATE_SIZE + EKF_IDX_BGZ] = dt * sin_phi;
-	f[EKF_IDX_YAW * EKF_IMU_STATE_SIZE + EKF_IDX_ROLL] = dt * (q * cos_phi - r * sin_phi) * sec_theta;
-	f[EKF_IDX_YAW * EKF_IMU_STATE_SIZE + EKF_IDX_PITCH] = dt * (q * sin_phi + r * cos_phi) * sec_theta * tan_theta;
-	f[EKF_IDX_YAW * EKF_IMU_STATE_SIZE + EKF_IDX_BGY] = -dt * sin_phi * sec_theta;
-	f[EKF_IDX_YAW * EKF_IMU_STATE_SIZE + EKF_IDX_BGZ] = -dt * cos_phi * sec_theta;
+	f[0 * EKF_IMU_STATE_SIZE + 0] = 1.0f + dt * (q * cos_phi * tan_theta - r * sin_phi * tan_theta);
+	f[0 * EKF_IMU_STATE_SIZE + 1] = dt * (q * sin_phi + r * cos_phi) * sec_theta2;
+	f[0 * EKF_IMU_STATE_SIZE + 3] = -dt;
+	f[0 * EKF_IMU_STATE_SIZE + 4] = -dt * sin_phi * tan_theta;
+	f[0 * EKF_IMU_STATE_SIZE + 5] = -dt * cos_phi * tan_theta;
+	f[1 * EKF_IMU_STATE_SIZE + 0] = dt * (-q * sin_phi - r * cos_phi);
+	f[1 * EKF_IMU_STATE_SIZE + 4] = -dt * cos_phi;
+	f[1 * EKF_IMU_STATE_SIZE + 5] = dt * sin_phi;
+	f[2 * EKF_IMU_STATE_SIZE + 0] = dt * (q * cos_phi - r * sin_phi) * sec_theta;
+	f[2 * EKF_IMU_STATE_SIZE + 1] = dt * (q * sin_phi + r * cos_phi) * sec_theta * tan_theta;
+	f[2 * EKF_IMU_STATE_SIZE + 4] = -dt * sin_phi * sec_theta;
+	f[2 * EKF_IMU_STATE_SIZE + 5] = -dt * cos_phi * sec_theta;
 }
 /**
  * @brief 观测模型与观测雅可比
@@ -93,8 +93,8 @@ static void ekf_measurement_model_and_jacobian(imu_ekf_object_t *ekf) {
 	float *x_minus = ekf->x_minus_data;
 	float *z_pred = ekf->z_pred_data;
 	float *h = ekf->h_data;
-	const float phi = x_minus[EKF_IDX_ROLL];
-	const float theta = x_minus[EKF_IDX_PITCH];
+	const float phi = x_minus[0];
+	const float theta = x_minus[1];
 	const float g = ekf->gravity;
 	const float sin_phi = sinf(phi);
 	const float cos_phi = cosf(phi);
@@ -104,11 +104,11 @@ static void ekf_measurement_model_and_jacobian(imu_ekf_object_t *ekf) {
 	z_pred[1] = g * sin_phi * cos_theta;
 	z_pred[2] = g * cos_phi * cos_theta;
 	memset(h, 0, EKF_IMU_MEAS_SIZE * EKF_IMU_STATE_SIZE * sizeof(float));
-	h[0 * EKF_IMU_STATE_SIZE + EKF_IDX_PITCH] = -g * cos_theta;
-	h[1 * EKF_IMU_STATE_SIZE + EKF_IDX_ROLL] = g * cos_phi * cos_theta;
-	h[1 * EKF_IMU_STATE_SIZE + EKF_IDX_PITCH] = -g * sin_phi * sin_theta;
-	h[2 * EKF_IMU_STATE_SIZE + EKF_IDX_ROLL] = -g * sin_phi * cos_theta;
-	h[2 * EKF_IMU_STATE_SIZE + EKF_IDX_PITCH] = -g * cos_phi * sin_theta;
+	h[0 * EKF_IMU_STATE_SIZE + 1] = -g * cos_theta;
+	h[1 * EKF_IMU_STATE_SIZE + 0] = g * cos_phi * cos_theta;
+	h[1 * EKF_IMU_STATE_SIZE + 1] = -g * sin_phi * sin_theta;
+	h[2 * EKF_IMU_STATE_SIZE + 0] = -g * sin_phi * cos_theta;
+	h[2 * EKF_IMU_STATE_SIZE + 1] = -g * cos_phi * sin_theta;
 }
 /**
  * @brief 初始化imu_ekf
@@ -273,9 +273,9 @@ arm_status imu_ekf_step(imu_ekf_object_t *ekf, const float gyro[EKF_IMU_INPUT_SI
 	if (status != ARM_MATH_SUCCESS) {
 		return status;
 	}
-	ekf->x_data[EKF_IDX_ROLL] = ekf_wrap_pi(ekf->x_data[EKF_IDX_ROLL]);
-	ekf->x_data[EKF_IDX_PITCH] = ekf_wrap_pi(ekf->x_data[EKF_IDX_PITCH]);
-	ekf->x_data[EKF_IDX_YAW] = ekf_wrap_pi(ekf->x_data[EKF_IDX_YAW]);
+	ekf->x_data[0] = ekf_wrap_pi(ekf->x_data[0]);
+	ekf->x_data[1] = ekf_wrap_pi(ekf->x_data[1]);
+	ekf->x_data[2] = ekf_wrap_pi(ekf->x_data[2]);
 	status = arm_mat_mult_f32(&ekf->k, &ekf->h, &ekf->temp_xx_1);
 	if (status != ARM_MATH_SUCCESS) {
 		return status;
@@ -286,9 +286,9 @@ arm_status imu_ekf_step(imu_ekf_object_t *ekf, const float gyro[EKF_IMU_INPUT_SI
 	}
 	status = arm_mat_mult_f32(&ekf->temp_xx_2, &ekf->p_minus, &ekf->p);
 	if (status == ARM_MATH_SUCCESS) {
-		ekf->corrected_gyro_data[0] = gyro[0] - ekf->x_data[EKF_IDX_BGX];
-		ekf->corrected_gyro_data[1] = gyro[1] - ekf->x_data[EKF_IDX_BGY];
-		ekf->corrected_gyro_data[2] = gyro[2] - ekf->x_data[EKF_IDX_BGZ];
+		ekf->corrected_gyro_data[0] = gyro[0] - ekf->x_data[3];
+		ekf->corrected_gyro_data[1] = gyro[1] - ekf->x_data[4];
+		ekf->corrected_gyro_data[2] = gyro[2] - ekf->x_data[5];
 	}
 	return status;
 }
@@ -304,13 +304,13 @@ void imu_ekf_get_euler(const imu_ekf_object_t *ekf, float *roll, float *pitch, f
 		return;
 	}
 	if (roll != NULL) {
-		*roll = ekf->x_data[EKF_IDX_ROLL];
+		*roll = ekf->x_data[0];
 	}
 	if (pitch != NULL) {
-		*pitch = ekf->x_data[EKF_IDX_PITCH];
+		*pitch = ekf->x_data[1];
 	}
 	if (yaw != NULL) {
-		*yaw = ekf->x_data[EKF_IDX_YAW];
+		*yaw = ekf->x_data[2];
 	}
 }
 /**
@@ -322,9 +322,9 @@ void imu_ekf_get_gyro_bias(const imu_ekf_object_t *ekf, float bias[EKF_IMU_INPUT
 	if ((ekf == NULL) || (bias == NULL) || (ekf->is_inited == 0U)) {
 		return;
 	}
-	bias[0] = ekf->x_data[EKF_IDX_BGX];
-	bias[1] = ekf->x_data[EKF_IDX_BGY];
-	bias[2] = ekf->x_data[EKF_IDX_BGZ];
+	bias[0] = ekf->x_data[3];
+	bias[1] = ekf->x_data[4];
+	bias[2] = ekf->x_data[5];
 }
 /**
  * @brief 获取状态估计
@@ -337,13 +337,13 @@ void imu_ekf_get_state(const imu_ekf_object_t *ekf, euler_t *euler, euler_rate_t
 		return;
 	}
 	if (euler != NULL) {
-		euler->roll = ekf->x_data[EKF_IDX_ROLL];
-		euler->pitch = ekf->x_data[EKF_IDX_PITCH];
-		euler->yaw = ekf->x_data[EKF_IDX_YAW];
+		euler->roll = ekf->x_data[0];
+		euler->pitch = ekf->x_data[1];
+		euler->yaw = ekf->x_data[2];
 	}
 	if (euler_rate != NULL) {
-		const float phi = ekf->x_data[EKF_IDX_ROLL];
-		const float theta = ekf->x_data[EKF_IDX_PITCH];
+		const float phi = ekf->x_data[0];
+		const float theta = ekf->x_data[1];
 		const float p = ekf->corrected_gyro_data[0];
 		const float q = ekf->corrected_gyro_data[1];
 		const float r = ekf->corrected_gyro_data[2];

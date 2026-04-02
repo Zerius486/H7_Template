@@ -3,5 +3,4 @@
 
 # 待开发功能列表
 - [x] LQR控制器 alg_lqr.c/h
-- [x] 陷波滤波器 alg_notch.c/h
 - [x] 滑模控制器 alg_smc.c/h

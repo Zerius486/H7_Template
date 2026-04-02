@@ -5,15 +5,6 @@
 #define EKF_IMU_STATE_SIZE 6U
 #define EKF_IMU_MEAS_SIZE 3U
 #define EKF_IMU_INPUT_SIZE 3U
-// 状态索引定义
-enum {
-	EKF_IDX_ROLL = 0,
-	EKF_IDX_PITCH,
-	EKF_IDX_YAW,
-	EKF_IDX_BGX,
-	EKF_IDX_BGY,
-	EKF_IDX_BGZ,
-};
 // imu_ekf结构体
 typedef struct {
 	float dt;

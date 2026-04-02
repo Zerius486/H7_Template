@@ -3,6 +3,7 @@
 #include "arm_math.h"
 #include "stdint.h"
 #include "stdlib.h"
+// 卡尔曼滤波器结构体
 typedef struct {
     uint8_t xhat_size;
     uint8_t u_size;
