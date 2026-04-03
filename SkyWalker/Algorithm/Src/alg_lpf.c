@@ -1,4 +1,4 @@
-# include "alg_lpf.h"
+#include "alg_lpf.h"
 /**
  * @brief 一阶低通滤波器初始化
  * @param lpf_1st 一阶低通滤波器结构体指针
@@ -44,7 +44,8 @@ void lpf_2nd_init(lpf_2nd_object_t *lpf_2nd, float alpha_1, float alpha_2) {
  * @return 滤波后的输出值
  */
 float lpf_2nd_update(lpf_2nd_object_t *lpf_2nd, float input) {
-    float output = lpf_2nd->alpha_1 * input + lpf_2nd->alpha_2 * lpf_2nd->prev_input_1 + (1.0f - lpf_2nd->alpha_1 - lpf_2nd->alpha_2) * lpf_2nd->prev_input_2;
+    float output = lpf_2nd->alpha_1 * input + lpf_2nd->alpha_2 * lpf_2nd->prev_input_1 +
+                   (1.0f - lpf_2nd->alpha_1 - lpf_2nd->alpha_2) * lpf_2nd->prev_input_2;
     lpf_2nd->prev_input_1 = lpf_2nd->prev_input_2;
     lpf_2nd->prev_input_2 = output;
     return output;

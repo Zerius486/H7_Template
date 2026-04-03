@@ -10,7 +10,7 @@ uart_object_t uart_object[UART_NBR] = {0};
  * @param huart UART句柄
  * @return UART对象实例索引，0xFF表示无效索引
  */
-uint8_t uart_index(UART_HandleTypeDef* huart) {
+uint8_t uart_index(UART_HandleTypeDef *huart) {
     if (huart == &huart1) {
         return 0;
     } else if (huart == &huart2) {
@@ -32,7 +32,7 @@ uint8_t uart_index(UART_HandleTypeDef* huart) {
  * @param huart UART句柄
  * @param callback 接收回调函数指针
  */
-void uart_init(UART_HandleTypeDef* huart, uart_rx_callback_t callback) {
+void uart_init(UART_HandleTypeDef *huart, uart_rx_callback_t callback) {
     // 获取UART对象实例索引
     uint32_t index = uart_index(huart);
     // 初始化对应的对象实例
@@ -52,7 +52,7 @@ void uart_init(UART_HandleTypeDef* huart, uart_rx_callback_t callback) {
  * @param tx_data 发送数据指针
  * @param tx_length 发送长度
  */
-void uart_transmit(UART_HandleTypeDef* huart, uint8_t* tx_data, uint16_t tx_length) { // NOLINT
+void uart_transmit(UART_HandleTypeDef *huart, uint8_t *tx_data, uint16_t tx_length) { // NOLINT
     // 获取UART对象实例索引
     uint32_t index = uart_index(huart);
     if (index != 0xFF && tx_length <= UART_BUFFER_SIZE) {
@@ -67,7 +67,7 @@ void uart_transmit(UART_HandleTypeDef* huart, uint8_t* tx_data, uint16_t tx_leng
  * @param huart UART句柄
  * @param rx_length 接收长度
  */
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef* huart, uint16_t rx_length) {
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t rx_length) {
     // 获取UART对象实例索引
     uint32_t index = uart_index(huart);
     if (index != 0xFF) {
@@ -89,7 +89,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef* huart, uint16_t rx_length) {
  * @brief HAL库 UART错误回调函数
  * @param huart UART句柄
  */
-void HAL_UART_ErrorCallback(UART_HandleTypeDef* huart) {
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
     uint32_t index = uart_index(huart);
     if (index != 0xFF) {
         // 重启DMA接收

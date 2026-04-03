@@ -59,26 +59,34 @@ float pid_calculate(pid_object_t *pid_object, float reference, float feedback) {
     float d_out = 0.0f;
     // 微分先行
     if (pid_object->is_derivativeonfeedback_enabled) {
-        d_out = pid_object->kd * (pid_object->feedback - pid_object->previous_feedback) / pid_object->sampling_time;
+        d_out = pid_object->kd * (pid_object->feedback - pid_object->previous_feedback) /
+                pid_object->sampling_time;
     } else {
-        d_out = pid_object->kd * (pid_object->error - pid_object->previous_error) / pid_object->sampling_time;
+        d_out = pid_object->kd * (pid_object->error - pid_object->previous_error) /
+                pid_object->sampling_time;
     }
     // 前馈计算
     float ff_out = 0.0f;
     if (pid_object->is_feedforward_enabled) {
-        ff_out = pid_object->kff * (pid_object->reference - pid_object->previous_reference) / pid_object->sampling_time;
+        ff_out = pid_object->kff * (pid_object->reference - pid_object->previous_reference) /
+                 pid_object->sampling_time;
     }
     // 积分分离逻辑
     bool is_integral_separate = false;
-    if (pid_object->is_integralseparate_enabled && fabsf(pid_object->error) > pid_object->integral_separate_threshold) {
+    if (pid_object->is_integralseparate_enabled &&
+        fabsf(pid_object->error) > pid_object->integral_separate_threshold) {
         is_integral_separate = true;
     }
     if (!is_integral_separate) {
         bool is_integral_updated = true;
-        float i_out_potential = pid_object->ki * (pid_object->error_sum + 0.5f * (pid_object->error + pid_object->previous_error) * pid_object->sampling_time);
+        float i_out_potential =
+            pid_object->ki *
+            (pid_object->error_sum +
+             0.5f * (pid_object->error + pid_object->previous_error) * pid_object->sampling_time);
         if (pid_object->is_antiwindup_enabled) {
             float total_output_potential = p_out + d_out + ff_out + i_out_potential;
-            if ((total_output_potential > pid_object->output_max && pid_object->error > 0.0f) || (total_output_potential < -pid_object->output_max && pid_object->error < 0.0f)) {
+            if ((total_output_potential > pid_object->output_max && pid_object->error > 0.0f) ||
+                (total_output_potential < -pid_object->output_max && pid_object->error < 0.0f)) {
                 is_integral_updated = false;
             }
             if (pid_object->error * pid_object->previous_error < 0) {
@@ -86,7 +94,8 @@ float pid_calculate(pid_object_t *pid_object, float reference, float feedback) {
             }
         }
         if (is_integral_updated) {
-            pid_object->error_sum += 0.5f * (pid_object->error + pid_object->previous_error) * pid_object->sampling_time;
+            pid_object->error_sum +=
+                0.5f * (pid_object->error + pid_object->previous_error) * pid_object->sampling_time;
         }
     }
     if (pid_object->is_antiwindup_enabled) {
@@ -100,7 +109,8 @@ float pid_calculate(pid_object_t *pid_object, float reference, float feedback) {
     i_out = pid_object->ki * pid_object->error_sum;
     pid_object->output = p_out + i_out + d_out + ff_out;
     if (pid_object->is_deadband_enabled) {
-        if (pid_object->output > -pid_object->deadband_threshold && pid_object->output < pid_object->deadband_threshold) {
+        if (pid_object->output > -pid_object->deadband_threshold &&
+            pid_object->output < pid_object->deadband_threshold) {
             pid_object->output = 0.0f;
         }
     }

@@ -10,7 +10,7 @@ pwm_object_t pwm_object[PWM_CHANNEL_NBR] = {0};
  * @param channel 通道
  * @return PWM对象实例索引，0xFF表示无效索引
  */
-uint8_t pwm_index(TIM_HandleTypeDef* htim, uint32_t channel) {
+uint8_t pwm_index(TIM_HandleTypeDef *htim, uint32_t channel) {
     if (htim == &htim3 && channel == TIM_CHANNEL_4) {
         return 0;
     } else {
@@ -22,7 +22,7 @@ uint8_t pwm_index(TIM_HandleTypeDef* htim, uint32_t channel) {
  * @param htim TIM句柄
  * @param channel 通道
  */
-void pwm_init(TIM_HandleTypeDef* htim, uint32_t channel) {
+void pwm_init(TIM_HandleTypeDef *htim, uint32_t channel) {
     // 获取PWM对象实例索引
     uint32_t index = pwm_index(htim, channel);
     // 初始化PWM结构体数据并启动输出
@@ -44,7 +44,7 @@ void pwm_init(TIM_HandleTypeDef* htim, uint32_t channel) {
  * @param channel 通道
  * @param duty_ratio 占空比
  */
-void pwm_set_duty_ratio(TIM_HandleTypeDef* htim, uint32_t channel, float duty_ratio) {
+void pwm_set_duty_ratio(TIM_HandleTypeDef *htim, uint32_t channel, float duty_ratio) {
     // 获取PWM对象实例索引
     uint32_t index = pwm_index(htim, channel);
     if (index != 0xFF) {
@@ -74,4 +74,3 @@ void pwm_set_duty_ratio(TIM_HandleTypeDef* htim, uint32_t channel, float duty_ra
         __HAL_TIM_SET_COMPARE(htim, channel, pwm_object[index].ccr);
     }
 }
-

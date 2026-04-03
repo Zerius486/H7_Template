@@ -19,8 +19,8 @@ void usb_init(usb_rx_callback_t callback) {
  * @param tx_data 发送数据指针
  * @param tx_length 发送长度
  */
-void usb_transmit(uint8_t* tx_data, uint16_t tx_length) {
-    if(!usb_object.is_connected || tx_length == 0 || tx_length > USB_BUFFER_SIZE) {
+void usb_transmit(uint8_t *tx_data, uint16_t tx_length) {
+    if (!usb_object.is_connected || tx_length == 0 || tx_length > USB_BUFFER_SIZE) {
         return;
     }
     // 复制数据到发送缓冲区

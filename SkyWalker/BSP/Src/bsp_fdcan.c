@@ -10,7 +10,7 @@ fdcan_object_t fdcan_object[FDCAN_NBR] = {0};
  * @param hfdcan FDCAN句柄
  * @return FDCAN对象实例索引，0xFF表示无效索引
  */
-static uint8_t fdcan_index(FDCAN_HandleTypeDef* hfdcan) {
+static uint8_t fdcan_index(FDCAN_HandleTypeDef *hfdcan) {
     if (hfdcan == &hfdcan1) {
         return 0;
     } else if (hfdcan == &hfdcan2) {
@@ -25,14 +25,14 @@ static uint8_t fdcan_index(FDCAN_HandleTypeDef* hfdcan) {
  * @brief 配置FDCAN过滤器，接收所有标准帧
  * @param hfdcan FDCAN句柄
  */
-static void fdcan_filter_config_all(FDCAN_HandleTypeDef* hfdcan) {
+static void fdcan_filter_config_all(FDCAN_HandleTypeDef *hfdcan) {
     // 获取FDCAN对象实例索引
     uint32_t index = fdcan_index(hfdcan);
     if (index != 0xFF) {
         FDCAN_FilterTypeDef filter_config;
         // 配置过滤器以接收所有标准帧
-        filter_config.IdType = FDCAN_STANDARD_ID;     // 标准ID
-        filter_config.FilterIndex = 0;                // 每个FDCAN实例使用各自的0号标准过滤器
+        filter_config.IdType = FDCAN_STANDARD_ID; // 标准ID
+        filter_config.FilterIndex = 0; // 每个FDCAN实例使用各自的0号标准过滤器
         filter_config.FilterType = FDCAN_FILTER_MASK; // 使用掩码过滤器
         if (fdcan_object[index].fifo_active == 0) {
             filter_config.FilterConfig = FDCAN_FILTER_TO_RXFIFO0; // 存储在RXFIFO0
@@ -48,31 +48,32 @@ static void fdcan_filter_config_all(FDCAN_HandleTypeDef* hfdcan) {
  * @brief 配置全局过滤器
  * @param hfdcan FDCAN句柄
  */
-static void fdcan_global_filter_config(FDCAN_HandleTypeDef* hfdcan) {
+static void fdcan_global_filter_config(FDCAN_HandleTypeDef *hfdcan) {
     // 全局过滤器配置为拒绝所有帧
-    HAL_FDCAN_ConfigGlobalFilter(hfdcan, FDCAN_REJECT, FDCAN_REJECT, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
+    HAL_FDCAN_ConfigGlobalFilter(hfdcan, FDCAN_REJECT, FDCAN_REJECT, FDCAN_REJECT_REMOTE,
+                                 FDCAN_REJECT_REMOTE);
 }
 /**
  * @brief 初始化FDCAN对象实例
  * @param hfdcan FDCAN句柄
  * @param callback 接收回调函数指针
  */
-void fdcan_init(FDCAN_HandleTypeDef* hfdcan, fdcan_rx_callback_t callback) {
+void fdcan_init(FDCAN_HandleTypeDef *hfdcan, fdcan_rx_callback_t callback) {
     // 获取FDCAN对象实例索引
     uint32_t index = fdcan_index(hfdcan);
     if (index != 0xFF) {
         // 初始化FDCAN对象实例
         fdcan_object[index].hfdcan = hfdcan;
-        fdcan_object[index].tx_header.IdType = FDCAN_STANDARD_ID;              // 使用标准ID
-        fdcan_object[index].tx_header.TxFrameType = FDCAN_DATA_FRAME;          // 数据帧
-        fdcan_object[index].tx_header.DataLength = 8;                          // 数据长度为8字节，对于某些设备需要单独更改
-        fdcan_object[index].tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;  // 错误状态指示器
-        fdcan_object[index].tx_header.BitRateSwitch = FDCAN_BRS_OFF;           // 不使用位速率切换
-        fdcan_object[index].tx_header.FDFormat = FDCAN_CLASSIC_CAN;            // 使用经典CAN格式
+        fdcan_object[index].tx_header.IdType = FDCAN_STANDARD_ID;     // 使用标准ID
+        fdcan_object[index].tx_header.TxFrameType = FDCAN_DATA_FRAME; // 数据帧
+        fdcan_object[index].tx_header.DataLength = 8; // 数据长度为8字节，对于某些设备需要单独更改
+        fdcan_object[index].tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE; // 错误状态指示器
+        fdcan_object[index].tx_header.BitRateSwitch = FDCAN_BRS_OFF; // 不使用位速率切换
+        fdcan_object[index].tx_header.FDFormat = FDCAN_CLASSIC_CAN;  // 使用经典CAN格式
         fdcan_object[index].tx_header.TxEventFifoControl = FDCAN_NO_TX_EVENTS; // 不使用传输事件FIFO
-        fdcan_object[index].tx_header.MessageMarker = 0;                       // 消息标记初始化为0
-        fdcan_object[index].callback = callback;                               // 设置接收回调函数指针
-        fdcan_object[index].fifo_active = 0;                                   // 默认使用FIFO0
+        fdcan_object[index].tx_header.MessageMarker = 0; // 消息标记初始化为0
+        fdcan_object[index].callback = callback;         // 设置接收回调函数指针
+        fdcan_object[index].fifo_active = 0;             // 默认使用FIFO0
         // 配置过滤器
         fdcan_filter_config_all(hfdcan);
         fdcan_global_filter_config(hfdcan);
@@ -94,7 +95,8 @@ void fdcan_init(FDCAN_HandleTypeDef* hfdcan, fdcan_rx_callback_t callback) {
  * @param tx_length 发送数据长度
  * @param std_id 标准ID
  */
-void fdcan_transmit(FDCAN_HandleTypeDef* hfdcan, uint8_t* tx_data, uint32_t tx_length, uint32_t std_id) {
+void fdcan_transmit(FDCAN_HandleTypeDef *hfdcan, uint8_t *tx_data, uint32_t tx_length,
+                    uint32_t std_id) {
     // 获取FDCAN对象实例索引
     uint32_t index = fdcan_index(hfdcan);
     if (index != 0xFF) {
@@ -107,7 +109,8 @@ void fdcan_transmit(FDCAN_HandleTypeDef* hfdcan, uint8_t* tx_data, uint32_t tx_l
         // 复制数据到发送缓冲区
         memcpy(fdcan_object[index].tx_buffer, tx_data, tx_length);
         // 将数据添加到传输队列
-        HAL_FDCAN_AddMessageToTxFifoQ(fdcan_object[index].hfdcan, &fdcan_object[index].tx_header, fdcan_object[index].tx_buffer);
+        HAL_FDCAN_AddMessageToTxFifoQ(fdcan_object[index].hfdcan, &fdcan_object[index].tx_header,
+                                      fdcan_object[index].tx_buffer);
     }
 }
 /**
@@ -115,15 +118,18 @@ void fdcan_transmit(FDCAN_HandleTypeDef* hfdcan, uint8_t* tx_data, uint32_t tx_l
  * @param hfdcan FDCAN句柄
  * @param RxFifo0ITs FIFO0中断标志
  */
-void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs) {
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) {
     // 获取FDCAN对象实例索引
     uint32_t index = fdcan_index(hfdcan);
     if (index != 0xFF) {
         // 接收数据
-        while (HAL_FDCAN_GetRxMessage(fdcan_object[index].hfdcan, FDCAN_RX_FIFO0, &fdcan_object[index].rx_header, fdcan_object[index].rx_buffer) == HAL_OK) {
+        while (HAL_FDCAN_GetRxMessage(fdcan_object[index].hfdcan, FDCAN_RX_FIFO0,
+                                      &fdcan_object[index].rx_header,
+                                      fdcan_object[index].rx_buffer) == HAL_OK) {
             if (fdcan_object[index].callback != NULL) {
                 // 调用回调函数
-                fdcan_object[index].callback(fdcan_object[index].rx_header.Identifier, fdcan_object[index].rx_buffer);
+                fdcan_object[index].callback(fdcan_object[index].rx_header.Identifier,
+                                             fdcan_object[index].rx_buffer);
             }
         }
     }
@@ -133,15 +139,18 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
  * @param hfdcan FDCAN句柄
  * @param RxFifo1ITs FIFO1中断标志
  */
-void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo1ITs) {
+void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs) {
     // 获取FDCAN对象实例索引
     uint32_t index = fdcan_index(hfdcan);
     if (index != 0xFF) {
         // 接收数据
-        while (HAL_FDCAN_GetRxMessage(fdcan_object[index].hfdcan, FDCAN_RX_FIFO1, &fdcan_object[index].rx_header, fdcan_object[index].rx_buffer) == HAL_OK) {
+        while (HAL_FDCAN_GetRxMessage(fdcan_object[index].hfdcan, FDCAN_RX_FIFO1,
+                                      &fdcan_object[index].rx_header,
+                                      fdcan_object[index].rx_buffer) == HAL_OK) {
             if (fdcan_object[index].callback != NULL) {
                 // 调用回调函数
-                fdcan_object[index].callback(fdcan_object[index].rx_header.Identifier, fdcan_object[index].rx_buffer);
+                fdcan_object[index].callback(fdcan_object[index].rx_header.Identifier,
+                                             fdcan_object[index].rx_buffer);
             }
         }
     }

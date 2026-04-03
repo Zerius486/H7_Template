@@ -43,24 +43,46 @@ void chassis_set_params(chassis_t *chassis, float lx, float ly) {
 void chassis_update_state(chassis_t *chassis) {
     switch (chassis->type) {
         case STEER_WHEEL:
-            float vx[4] = {chassis->velocity.vx - chassis->velocity.omega * chassis->params.ly, chassis->velocity.vx - chassis->velocity.omega * chassis->params.ly, chassis->velocity.vx + chassis->velocity.omega * chassis->params.ly, chassis->velocity.vx + chassis->velocity.omega * chassis->params.ly};
-            float vy[4] = {chassis->velocity.vy + chassis->velocity.omega * chassis->params.lx, chassis->velocity.vy - chassis->velocity.omega * chassis->params.lx, chassis->velocity.vy - chassis->velocity.omega * chassis->params.lx, chassis->velocity.vy + chassis->velocity.omega * chassis->params.lx};
+            float vx[4] = {chassis->velocity.vx - chassis->velocity.omega * chassis->params.ly,
+                           chassis->velocity.vx - chassis->velocity.omega * chassis->params.ly,
+                           chassis->velocity.vx + chassis->velocity.omega * chassis->params.ly,
+                           chassis->velocity.vx + chassis->velocity.omega * chassis->params.ly};
+            float vy[4] = {chassis->velocity.vy + chassis->velocity.omega * chassis->params.lx,
+                           chassis->velocity.vy - chassis->velocity.omega * chassis->params.lx,
+                           chassis->velocity.vy - chassis->velocity.omega * chassis->params.lx,
+                           chassis->velocity.vy + chassis->velocity.omega * chassis->params.lx};
             for (int i = 0; i < 4; i++) {
                 chassis->state.wheel_speed[i] = sqrtf(vx[i] * vx[i] + vy[i] * vy[i]);
                 chassis->state.wheel_angle[i] = atan2f(vy[i], vx[i]);
             }
             break;
         case MECANUM_WHEEL:
-            chassis->state.wheel_speed[0] = chassis->velocity.vx - chassis->velocity.vy + chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
-            chassis->state.wheel_speed[1] = -chassis->velocity.vx - chassis->velocity.vy + chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
-            chassis->state.wheel_speed[2] = -chassis->velocity.vx + chassis->velocity.vy - chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
-            chassis->state.wheel_speed[3] = chassis->velocity.vx + chassis->velocity.vy - chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[0] =
+                chassis->velocity.vx - chassis->velocity.vy +
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[1] =
+                -chassis->velocity.vx - chassis->velocity.vy +
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[2] =
+                -chassis->velocity.vx + chassis->velocity.vy -
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[3] =
+                chassis->velocity.vx + chassis->velocity.vy -
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
             break;
         case OMNI_WHEEL:
-            chassis->state.wheel_speed[0] = SQRT2 / 2 * (chassis->velocity.vx + chassis->velocity.vy) + chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
-            chassis->state.wheel_speed[1] = SQRT2 / 2 * (-chassis->velocity.vx + chassis->velocity.vy) + chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
-            chassis->state.wheel_speed[2] = SQRT2 / 2 * (-chassis->velocity.vx - chassis->velocity.vy) + chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
-            chassis->state.wheel_speed[3] = SQRT2 / 2 * (chassis->velocity.vx - chassis->velocity.vy) + chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[0] =
+                SQRT2 / 2 * (chassis->velocity.vx + chassis->velocity.vy) +
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[1] =
+                SQRT2 / 2 * (-chassis->velocity.vx + chassis->velocity.vy) +
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[2] =
+                SQRT2 / 2 * (-chassis->velocity.vx - chassis->velocity.vy) +
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
+            chassis->state.wheel_speed[3] =
+                SQRT2 / 2 * (chassis->velocity.vx - chassis->velocity.vy) +
+                chassis->velocity.omega * (chassis->params.lx + chassis->params.ly);
             break;
         default:
             break;

@@ -63,3 +63,30 @@ target_compile_definitions(SkyWalker PRIVATE
 target_link_libraries(SkyWalker PUBLIC
     stm32cubemx
 )
+
+# SkyWalker本地格式化目标
+find_program(CLANG_FORMAT_BIN NAMES clang-format)
+if(CLANG_FORMAT_BIN)
+    file(GLOB_RECURSE SKYWALKER_FORMAT_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/Inc/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/Src/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/BSP/Inc/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/BSP/Src/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Device/Inc/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Device/Src/*.c"
+    )
+    add_custom_target(skywalker-format
+        COMMAND ${CLANG_FORMAT_BIN} -i ${SKYWALKER_FORMAT_FILES}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Run clang-format for SkyWalker files only"
+        VERBATIM
+    )
+    add_custom_target(skywalker-format-check
+        COMMAND ${CLANG_FORMAT_BIN} --dry-run --Werror ${SKYWALKER_FORMAT_FILES}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Check clang-format for SkyWalker files only"
+        VERBATIM
+    )
+else()
+    message(STATUS "clang-format not found: skywalker-format targets are disabled")
+endif()

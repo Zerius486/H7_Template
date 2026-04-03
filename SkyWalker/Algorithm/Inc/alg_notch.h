@@ -12,6 +12,6 @@ typedef struct {
     float y1; // 上一次输出
     float y2; // 上上次输出
 } notch_filter_object_t;
-void notch_filter_init(notch_filter_object_t* notch_filter, float f0, float Q, float fs);
-float notch_filter_process(notch_filter_object_t* notch_filter, float input); 
+void notch_filter_init(notch_filter_object_t *notch_filter, float f0, float Q, float fs);
+float notch_filter_process(notch_filter_object_t *notch_filter, float input);
 #endif // ALG_NOTCH_H

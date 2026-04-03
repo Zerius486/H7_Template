@@ -5,9 +5,9 @@
  * @param notch_filter 陷波滤波器指针
  * @param f0 陷波频率
  * @param q 品质因数
- * @param fs 采样频率    
+ * @param fs 采样频率
  */
-void notch_filter_init(notch_filter_object_t* notch_filter, float f0, float q, float fs) {
+void notch_filter_init(notch_filter_object_t *notch_filter, float f0, float q, float fs) {
     float w0 = 2.0f * M_PI * f0 / fs;
     float alpha = sinf(w0) / (2.0f * q);
     float cos_w0 = cosf(w0);
@@ -28,9 +28,11 @@ void notch_filter_init(notch_filter_object_t* notch_filter, float f0, float q, f
  * @param input 当前输入信号
  * @return 滤波后的输出信号
  */
-float notch_filter_process(notch_filter_object_t* notch_filter, float input) {
+float notch_filter_process(notch_filter_object_t *notch_filter, float input) {
     // 计算当前输出
-    float output = notch_filter->a0 * input + notch_filter->a1 * notch_filter->x1 + notch_filter->a2 * notch_filter->x2 - notch_filter->b1 * notch_filter->y1 - notch_filter->b2 * notch_filter->y2;
+    float output = notch_filter->a0 * input + notch_filter->a1 * notch_filter->x1 +
+                   notch_filter->a2 * notch_filter->x2 - notch_filter->b1 * notch_filter->y1 -
+                   notch_filter->b2 * notch_filter->y2;
     // 更新历史值
     notch_filter->x2 = notch_filter->x1;
     notch_filter->x1 = input;
