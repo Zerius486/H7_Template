@@ -17,6 +17,7 @@ target_sources(SkyWalker PRIVATE
     Algorithm/Src/alg_crc.c
     Algorithm/Src/alg_imu_ekf.c
     Algorithm/Src/alg_euler.c
+    Algorithm/Src/alg_gimbal_adrc.c
     Algorithm/Src/alg_kf.c
     Algorithm/Src/alg_lpf.c
     Algorithm/Src/alg_lqr.c
@@ -25,6 +26,7 @@ target_sources(SkyWalker PRIVATE
     Algorithm/Src/alg_median.c
     Algorithm/Src/alg_notch.c
     Algorithm/Src/alg_smc.c
+    Algorithm/Src/alg_td_nl.c
     Algorithm/Src/alg_td.c
     BSP/Src/bsp_fdcan.c
     BSP/Src/bsp_pwm.c
