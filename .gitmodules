@@ -1,0 +1,3 @@
+[submodule "SkyWalker"]
+	path = SkyWalker
+	url = https://github.com/NUAA-XTYF/SkyWalker-EC-Core.git
